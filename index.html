@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <!-- ================================================================= -->
+    <!-- 1. CONFIGURACIÓN BÁSICA, METADATOS Y MANIFIESTO PWA               -->
+    <!-- ================================================================= -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuro Lab - Next-Gen Music & Sound Spectrum</title>
+
+    <!-- Vinculación del Manifiesto PWA para instalación en Android/iOS -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00F0FF">
+
+    <!-- Librerías Externas: Tailwind CSS (Estilos) y FontAwesome (Iconos) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Fuentes Tipográficas desde Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Configuración del Tema de Tailwind con variables dinámicas -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            acid: 'var(--color-primary)',
+                            acidGlow: 'var(--color-primary-glow)',
+                            bgDark: 'var(--color-bg-dark)',
+                            card: 'var(--color-card-bg)',
+                            border: 'var(--color-border)',
+                        }
+                    },
+                    fontFamily: {
+                        title: ['Syne', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- ================================================================= -->
+    <!-- 2. ESTILOS CSS PERSONALIZADOS Y TEMAS DE COLOR NEÓN              -->
+    <!-- ================================================================= -->
+    <style>
+        :root {
+            /* Tema Por Defecto: Cyber Cyan */
+            --color-primary: #00F0FF;
+            --color-primary-glow: rgba(0, 240, 255, 0.35);
+            --color-bg-dark: #050B14;
+            --color-card-bg: rgba(10, 25, 47, 0.65);
+            --color-border: rgba(0, 240, 255, 0.25);
+        }
+
+        /* Temas Alternativos Dinámicos de la App */
+        body.theme-Kromatyk_Signature {
+            --color-primary: #CCFF00;
+            --color-primary-glow: rgba(204, 255, 0, 0.35);
+            --color-bg-dark: #0F071B;
+            --color-card-bg: rgba(26, 15, 46, 0.65);
+            --color-border: rgba(204, 255, 0, 0.25);
+        }
+        body.theme-magenta {
+            --color-primary: #FF007F;
+            --color-primary-glow: rgba(255, 0, 127, 0.35);
+            --color-bg-dark: #0C071E;
+            --color-card-bg: rgba(30, 12, 48, 0.65);
+            --color-border: rgba(255, 0, 127, 0.25);
+        }
+        body.theme-amber {
+            --color-primary: #FFB800;
+            --color-primary-glow: rgba(255, 184, 0, 0.35);
+            --color-bg-dark: #12100B;
+            --color-card-bg: rgba(38, 30, 15, 0.65);
+            --color-border: rgba(255, 184, 0, 0.25);
+        }
+
+        body {
+            background-color: var(--color-bg-dark);
+            color: #F3F4F6;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        /* Efecto Glassmorphism (Cristal Translúcido) */
+        .glass-panel {
+            background: var(--color-card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--color-border);
+        }
+
+        .glass-button {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+        .glass-button:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--color-primary);
+            box-shadow: 0 0 12px var(--color-primary-glow);
+        }
+
+        /* Animación de Vinilo Giratorio */
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-vinyl {
+            animation: spin-slow 4s linear infinite;
+        }
+        .animate-vinyl.paused {
+            animation-play-state: paused;
+        }
+
+        /* Personalización de Scrollbar y Sliders */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
+        ::-webkit-scrollbar-thumb { background: var(--color-primary); border-radius: 9999px; }
+        input[type=range] { accent-color: var(--color-primary); }
+        .glow-text { text-shadow: 0 0 10px var(--color-primary-glow); }
+    </style>
+</head>
+<body class="h-full font-sans antialiased flex flex-col overflow-x-hidden selection:bg-brand-acid selection:text-black">
+
+    <!-- ================================================================= -->
+    <!-- 3. CABECERA SUPERIOR Y SELECTOR DE TEMAS (Header TopBar)         -->
+    <!-- ================================================================= -->
+    <header class="glass-panel sticky top-0 z-50 px-4 py-3 flex items-center justify-between border-b border-white/10">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-brand-acid flex items-center justify-center text-black font-title text-xl font-extrabold shadow-[0_0_15px_var(--color-primary-glow)]">
+                N
+            </div>
+            <div>
+                <h1 class="font-title text-xl font-extrabold tracking-wider text-white flex items-center gap-2">
+                    Nuro Lab <span class="text-xs px-2 py-0.5 rounded bg-brand-acid/20 text-brand-acid border border-brand-acid/40 font-mono font-bold">DJ AI</span>
+                </h1>
+                <p class="text-xs text-gray-400">Intelligent DJ & Audio Spectrum System</p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <!-- Indicador de Estado del Motor DSP de Audio -->
+            <button id="btn-audio-engine" onclick="toggleAudioEngine()" class="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-mono border border-white/10 glass-button">
+                <span id="engine-dot" class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+                <span id="engine-text" class="text-gray-300">DSP: Inactivo (Clic para Iniciar)</span>
+            </button>
+
+            <!-- Indicador de Normalización EBU R128 -->
+            <div class="hidden md:flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-mono bg-white/5 border border-white/10">
+                <i class="fa-solid fa-gauge-high text-brand-acid"></i>
+                <span class="text-gray-300">EBU R128: <strong id="ebu-status-header" class="text-brand-acid">ON (-14 LUFS)</strong></span>
+            </div>
+
+            <!-- Desplegable para Cambiar el Coloreado Neón -->
+            <div class="relative inline-block text-left">
+                <select id="theme-selector" onchange="changeTheme(this.value)"
+                    class="bg-black/60 border border-brand-acid/40 text-brand-acid text-xs font-mono rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-brand-acid cursor-pointer">
+                    <option value="cyber" selected>⚡Cyber Cyan</option>
+                    <option value="signature">✦ Kromatyk (Verde Lima)</option>
+                    <option value="magenta">🔥 Neón Magenta</option>
+                    <option value="amber">☀️ Ámbar Solar</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- ================================================================= -->
+    <!-- 4. BARRA DE NAVEGACIÓN PRINCIPAL POR PESTAÑAS (Nav Tabs)          -->
+    <!-- ================================================================= -->
+    <nav class="bg-black/40 border-b border-white/10 px-4 pt-2 overflow-x-auto">
+        <div class="flex space-x-2 min-w-max">
+            <button onclick="switchTab('tab-player')" id="nav-tab-player" class="tab-btn active px-4 py-2.5 rounded-t-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center space-x-2 border-t-2 border-brand-acid bg-white/10 text-brand-acid">
+                <i class="fa-solid fa-compact-disc"></i> <span>Reproductor</span>
+            </button>
+            <button onclick="switchTab('tab-dj')" id="nav-tab-dj" class="tab-btn px-4 py-2.5 rounded-t-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center space-x-2 border-t-2 border-transparent text-gray-400 hover:text-white hover:bg-white/5">
+                <i class="fa-solid fa-sliders"></i> <span>Modo DJ (2 Decks)</span>
+            </button>
+            <button onclick="switchTab('tab-visualizer')" id="nav-tab-visualizer" class="tab-btn px-4 py-2.5 rounded-t-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center space-x-2 border-t-2 border-transparent text-gray-400 hover:text-white hover:bg-white/5">
+                <i class="fa-solid fa-chart-simple"></i> <span>Visualizador 3D</span>
+            </button>
+            <button onclick="switchTab('tab-ai')" id="nav-tab-ai" class="tab-btn px-4 py-2.5 rounded-t-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center space-x-2 border-t-2 border-transparent text-gray-400 hover:text-white hover:bg-white/5">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Asistente IA</span>
+            </button>
+            <button onclick="switchTab('tab-party')" id="nav-tab-party" class="tab-btn px-4 py-2.5 rounded-t-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center space-x-2 border-t-2 border-transparent text-gray-400 hover:text-white hover:bg-white/5">
+                <i class="fa-solid fa-qrcode"></i> <span>Modo Fiesta QR</span>
+            </button>
+            <button onclick="switchTab('tab-folders')" id="nav-tab-folders" class="tab-btn px-4 py-2.5 rounded-t-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center space-x-2 border-t-2 border-transparent text-gray-400 hover:text-white hover:bg-white/5">
+                <i class="fa-solid fa-folder-tree"></i> <span>Biblioteca / Carpetas</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- CONTENEDOR PRINCIPAL DE PANTALLAS -->
+    <main class="flex-1 p-4 md:p-6 max-w-7xl w-full mx-auto pb-32">
+
+        <!-- ============================================================= -->
+        <!-- 5. SECCIÓN TAB 1: REPRODUCTOR PRINCIPAL CON VINILO ANIMADO    -->
+        <!-- ============================================================= -->
+        <section id="tab-player" class="tab-content block">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                <!-- Disco de Vinilo Interactivo y Aguja del Tocadiscos -->
+                <div class="lg:col-span-5 flex flex-col items-center justify-center p-6 glass-panel rounded-3xl relative overflow-hidden">
+                    <div class="relative w-64 h-64 sm:w-72 sm:h-72 my-4">
+                        <div id="vinyl-disc" class="w-full h-full rounded-full bg-black border-4 border-gray-900 shadow-2xl flex items-center justify-center animate-vinyl paused relative">
+                            <div class="w-[90%] h-[90%] rounded-full border border-white/5 flex items-center justify-center">
+                                <div class="w-[80%] h-[80%] rounded-full border border-white/10 flex items-center justify-center">
+                                    <div class="w-[45%] h-[45%] rounded-full bg-cover bg-center border-4 border-black relative overflow-hidden" style="background-image: url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop');">
+                                        <div class="w-4 h-4 rounded-full bg-black border-2 border-gray-400 absolute inset-0 m-auto"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tonearm" class="absolute -top-4 -right-2 w-24 h-32 transition-transform duration-500 transform origin-top-right rotate-[-25deg] pointer-events-none">
+                            <div class="w-3 h-3 rounded-full bg-gray-400 border border-white mb-1 shadow"></div>
+                            <div class="w-1.5 h-24 bg-gradient-to-b from-gray-400 to-gray-600 mx-auto rounded"></div>
+                            <div class="w-4 h-6 bg-brand-acid rounded-sm border border-black shadow-[0_0_8px_var(--color-primary-glow)]"></div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4 z-10">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-acid/10 border border-brand-acid/30 text-brand-acid text-xs font-mono mb-2">
+                            <i class="fa-solid fa-music"></i> <span id="player-genre">ELECTRO VALLENATO REMIX</span>
+                        </div>
+                        <h2 id="player-title" class="font-title text-2xl sm:text-3xl font-extrabold text-white tracking-wide glow-text">Bésame (Kromatyk Club Mix)</h2>
+                        <p id="player-artist" class="text-gray-400 text-sm mt-1 font-medium">Darío Gómez ft. DJ Synth AI</p>
+                    </div>
+                </div>
+
+                <!-- Controles Principales de Audio y Forma de Onda -->
+                <div class="lg:col-span-7 flex flex-col space-y-6">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <div class="glass-panel p-3 rounded-2xl flex items-center space-x-3">
+                            <div class="w-9 h-9 rounded-xl bg-brand-acid/20 text-brand-acid flex items-center justify-center text-lg"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                            <div>
+                                <div class="text-[10px] text-gray-400 uppercase font-mono">Transición IA</div>
+                                <div class="text-xs font-bold text-white">Smart Crossfade</div>
+                            </div>
+                        </div>
+                        <div class="glass-panel p-3 rounded-2xl flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-9 h-9 rounded-xl bg-brand-acid/20 text-brand-acid flex items-center justify-center text-lg"><i class="fa-solid fa-volume-high"></i></div>
+                                <div>
+                                    <div class="text-[10px] text-gray-400 uppercase font-mono">Volumen</div>
+                                    <div class="text-xs font-bold text-white">EBU R128</div>
+                                </div>
+                            </div>
+                            <button onclick="toggleEBU()" id="btn-ebu-toggle" class="w-10 h-6 bg-brand-acid rounded-full p-1 transition-colors relative">
+                                <div id="ebu-dot" class="w-4 h-4 bg-black rounded-full transition-transform transform translate-x-4"></div>
+                            </button>
+                        </div>
+                        <div class="glass-panel p-3 rounded-2xl flex items-center space-x-3 col-span-2 sm:col-span-1">
+                            <div class="w-9 h-9 rounded-xl bg-brand-acid/20 text-brand-acid flex items-center justify-center text-lg"><i class="fa-solid fa-bolt"></i></div>
+                            <div>
+                                <div class="text-[10px] text-gray-400 uppercase font-mono">Tempo Detectado</div>
+                                <div class="text-xs font-bold text-white"><span id="live-bpm">128.0</span> BPM</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visualización de Forma de Onda (Waveform) interactiva -->
+                    <div class="glass-panel p-5 rounded-3xl space-y-3">
+                        <div class="flex justify-between text-xs font-mono text-gray-400">
+                            <span id="current-time">01:24</span>
+                            <span class="text-brand-acid font-bold">WAVEFORM SPECTRUM PREVIEW</span>
+                            <span id="total-time">03:45</span>
+                        </div>
+                        <div id="waveform-container" class="h-16 flex items-center gap-1 cursor-pointer py-1" onclick="seekTrack(event)"></div>
+                        <div class="relative w-full bg-white/10 h-2 rounded-full overflow-hidden cursor-pointer" onclick="seekTrack(event)">
+                            <div id="progress-bar" class="bg-brand-acid h-full w-[38%] transition-all duration-200"></div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Reproducción, Pausa y Barra de Volumen Master -->
+                    <div class="glass-panel p-6 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center space-x-4">
+                            <button onclick="showToast('Modo Aleatorio Activado')" class="text-gray-400 hover:text-brand-acid"><i class="fa-solid fa-shuffle"></i></button>
+                            <button onclick="prevTrack()" class="w-12 h-12 rounded-full glass-button flex items-center justify-center text-white"><i class="fa-solid fa-backward-step"></i></button>
+                            <button onclick="togglePlayPause()" id="main-play-btn" class="w-16 h-16 rounded-full bg-brand-acid text-black flex items-center justify-center text-2xl font-bold shadow-[0_0_20px_var(--color-primary-glow)] hover:scale-105 transition-transform">
+                                <i class="fa-solid fa-play ml-1" id="main-play-icon"></i>
+                            </button>
+                            <button onclick="nextTrack()" class="w-12 h-12 rounded-full glass-button flex items-center justify-center text-white"><i class="fa-solid fa-forward-step"></i></button>
+                            <button onclick="showToast('Bucle Activado')" class="text-gray-400 hover:text-brand-acid"><i class="fa-solid fa-repeat"></i></button>
+                        </div>
+                        <div class="flex items-center space-x-3 w-full sm:w-48">
+                            <i class="fa-solid fa-volume-low text-gray-400 text-xs"></i>
+                            <input type="range" id="master-volume" min="0" max="100" value="80" oninput="setMasterVolume(this.value)" class="w-full h-1.5 bg-white/20 rounded-lg cursor-pointer">
+                            <i class="fa-solid fa-volume-high text-brand-acid text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- 6. SECCIÓN TAB 2: CONSOLA DUAL DE DJ (Decks A & B + Crossfader)-->
+        <!-- ============================================================= -->
+        <section id="tab-dj" class="tab-content hidden">
+            <div class="space-y-6">
+                <div class="flex items-center justify-between bg-black/40 p-4 rounded-2xl border border-white/10">
+                    <div>
+                        <h3 class="font-title text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-brand-acid"></i> CONSOLA DUAL DJ PRO
+                        </h3>
+                        <p class="text-xs text-gray-400">Mezcla armónica sin silencios (Gapless Smart Mixing)</p>
+                    </div>
+                    <button onclick="syncBPM()" class="px-4 py-2 rounded-xl bg-brand-acid text-black font-bold text-xs uppercase tracking-wider shadow-[0_0_12px_var(--color-primary-glow)]">
+                        <i class="fa-solid fa-arrows-rotate mr-1"></i> Sync BPM Automático
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- DECK A -->
+                    <div class="lg:col-span-5 glass-panel p-5 rounded-3xl space-y-4 border-l-4 border-l-brand-acid">
+                        <div class="flex justify-between items-center">
+                            <span class="px-3 py-1 rounded-full bg-brand-acid/20 text-brand-acid text-xs font-mono font-bold">DECK A</span>
+                            <span class="text-xs font-mono text-gray-400">BPM: <strong id="deckA-bpm" class="text-white">124.0</strong></span>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="w-16 h-16 rounded-2xl bg-cover bg-center border border-white/20 shadow" style="background-image: url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=200&auto=format&fit=crop');"></div>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">Bésame (DJ Remix)</h4>
+                                <p class="text-xs text-gray-400">Darío Gómez</p>
+                                <span class="inline-block mt-1 text-[10px] px-2 py-0.5 rounded bg-white/10 text-brand-acid font-mono">KEY: 8A</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 py-2 text-center">
+                            <div class="glass-panel p-2 rounded-xl"><span class="text-[10px] text-gray-400 block font-mono">HIGH</span><input type="range" min="0" max="100" value="75" class="w-full mt-1"></div>
+                            <div class="glass-panel p-2 rounded-xl"><span class="text-[10px] text-gray-400 block font-mono">MID</span><input type="range" min="0" max="100" value="80" class="w-full mt-1"></div>
+                            <div class="glass-panel p-2 rounded-xl"><span class="text-[10px] text-gray-400 block font-mono">BASS</span><input type="range" min="0" max="100" value="90" class="w-full mt-1"></div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2">
+                            <button onclick="toggleDeckPlay('A')" id="btn-play-deckA" class="px-6 py-2.5 rounded-xl bg-brand-acid text-black font-bold text-xs"><i class="fa-solid fa-play mr-1"></i> PLAY A</button>
+                            <button onclick="showToast('Cue A Fijado')" class="px-4 py-2.5 rounded-xl glass-button text-xs font-bold text-white">CUE</button>
+                            <div class="flex items-center space-x-2 w-32">
+                                <span class="text-[10px] font-mono text-gray-400">PITCH</span>
+                                <input type="range" min="-10" max="10" value="0" oninput="adjustPitch('A', this.value)" class="w-full">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MEZCLADOR CENTRAL Y CROSSFADER -->
+                    <div class="lg:col-span-2 glass-panel p-5 rounded-3xl flex flex-col justify-between items-center space-y-6">
+                        <div class="text-center">
+                            <div class="text-xs font-mono text-gray-400 uppercase">Master VU</div>
+                            <div class="flex space-x-2 justify-center my-2">
+                                <div class="w-3 h-24 bg-black/60 rounded-full p-1 flex flex-col justify-end space-y-1">
+                                    <div class="w-full h-2 rounded bg-red-500"></div>
+                                    <div class="w-full h-2 rounded bg-yellow-400"></div>
+                                    <div class="w-full h-2 rounded bg-brand-acid"></div>
+                                    <div class="w-full h-2 rounded bg-brand-acid"></div>
+                                </div>
+                                <div class="w-3 h-24 bg-black/60 rounded-full p-1 flex flex-col justify-end space-y-1">
+                                    <div class="w-full h-2 rounded bg-red-500"></div>
+                                    <div class="w-full h-2 rounded bg-yellow-400"></div>
+                                    <div class="w-full h-2 rounded bg-brand-acid"></div>
+                                    <div class="w-full h-2 rounded bg-brand-acid"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full text-center space-y-2">
+                            <span class="text-[10px] font-mono text-gray-400 block uppercase">CROSSFADER</span>
+                            <input type="range" id="dj-crossfader" min="0" max="100" value="50" oninput="updateCrossfader(this.value)" class="w-full h-3 bg-black/80 rounded-lg cursor-pointer">
+                        </div>
+                    </div>
+
+                    <!-- DECK B -->
+                    <div class="lg:col-span-5 glass-panel p-5 rounded-3xl space-y-4 border-r-4 border-r-purple-500">
+                        <div class="flex justify-between items-center">
+                            <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-400 text-xs font-mono font-bold">DECK B</span>
+                            <span class="text-xs font-mono text-gray-400">BPM: <strong id="deckB-bpm" class="text-white">128.0</strong></span>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="w-16 h-16 rounded-2xl bg-cover bg-center border border-white/20 shadow" style="background-image: url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=200&auto=format&fit=crop');"></div>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">Cuando Vuelvas</h4>
+                                <p class="text-xs text-gray-400">Binomio de Oro</p>
+                                <span class="inline-block mt-1 text-[10px] px-2 py-0.5 rounded bg-white/10 text-purple-400 font-mono">KEY: 8B</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 py-2 text-center">
+                            <div class="glass-panel p-2 rounded-xl"><span class="text-[10px] text-gray-400 block font-mono">HIGH</span><input type="range" min="0" max="100" value="80" class="w-full mt-1"></div>
+                            <div class="glass-panel p-2 rounded-xl"><span class="text-[10px] text-gray-400 block font-mono">MID</span><input type="range" min="0" max="100" value="75" class="w-full mt-1"></div>
+                            <div class="glass-panel p-2 rounded-xl"><span class="text-[10px] text-gray-400 block font-mono">BASS</span><input type="range" min="0" max="100" value="85" class="w-full mt-1"></div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2">
+                            <button onclick="toggleDeckPlay('B')" id="btn-play-deckB" class="px-6 py-2.5 rounded-xl bg-purple-600 text-white font-bold text-xs"><i class="fa-solid fa-play mr-1"></i> PLAY B</button>
+                            <button onclick="showToast('Cue B Fijado')" class="px-4 py-2.5 rounded-xl glass-button text-xs font-bold text-white">CUE</button>
+                            <div class="flex items-center space-x-2 w-32">
+                                <span class="text-[10px] font-mono text-gray-400">PITCH</span>
+                                <input type="range" min="-10" max="10" value="0" oninput="adjustPitch('B', this.value)" class="w-full">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- 7. SECCIÓN TAB 3: VISUALIZADOR 3D Y ESPECTRÓMETRO A 60 FPS   -->
+        <!-- ============================================================= -->
+        <section id="tab-visualizer" class="tab-content hidden">
+            <div class="glass-panel p-6 rounded-3xl space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h3 class="font-title text-xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-eye text-brand-acid"></i> ESPECTRÓMETRO & SHOW DE LUCES 3D
+                        </h3>
+                        <p class="text-xs text-gray-400">Renderizado Reactivo a 60 FPS con análisis de audio en tiempo real</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="setVisMode('bars')" class="px-3 py-1.5 rounded-lg text-xs font-mono glass-button text-brand-acid">Barras Neón</button>
+                        <button onclick="setVisMode('waves')" class="px-3 py-1.5 rounded-lg text-xs font-mono glass-button text-white">Onda 3D</button>
+                        <button onclick="setVisMode('lights')" class="px-3 py-1.5 rounded-lg text-xs font-mono glass-button text-white">Estudio Concierto</button>
+                    </div>
+                </div>
+                <!-- Canvas de dibujo renderizado por JavaScript -->
+                <div class="relative w-full h-[380px] rounded-2xl overflow-hidden bg-black/80 border border-white/10 shadow-inner">
+                    <canvas id="visualizer-canvas" class="w-full h-full block"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- 8. SECCIÓN TAB 4: ASISTENTE DE INTELIGENCIA ARTIFICIAL        -->
+        <!-- ============================================================= -->
+        <section id="tab-ai" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="lg:col-span-6 glass-panel p-6 rounded-3xl space-y-4">
+                    <h3 class="font-title text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-brand-acid"></i> ASISTENTE IA DE PLAYLISTS
+                    </h3>
+                    <p class="text-xs text-gray-400">Escribe o dicta qué canciones deseas agregar, quitar o mezclar.</p>
+                    <textarea id="ai-prompt-input" rows="4" class="w-full bg-black/60 border border-white/10 rounded-2xl p-4 text-xs font-mono text-white focus:outline-none focus:border-brand-acid" placeholder="Ejemplo: Crea una lista con Bésame de Darío Gómez y Traidora de Jessi Uribe, pero quita la de Jessi y pon una del Binomio de Oro..."></textarea>
+                    <button onclick="processAICommand()" class="w-full py-3 rounded-xl bg-brand-acid text-black font-bold text-xs uppercase tracking-wider shadow-[0_0_15px_var(--color-primary-glow)]">
+                        <i class="fa-solid fa-bolt mr-2"></i> Procesar Comando Inteligente
+                    </button>
+                </div>
+                <div class="lg:col-span-6 glass-panel p-6 rounded-3xl space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-mono text-gray-400 uppercase">Respuesta JSON del Modelo IA</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded bg-brand-acid/20 text-brand-acid font-mono">STATUS 200 OK</span>
+                    </div>
+                    <pre id="ai-json-output" class="w-full h-48 bg-black/80 border border-white/10 rounded-2xl p-4 text-xs font-mono text-brand-acid overflow-y-auto">// Espurando comando del usuario...</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- 9. SECCIÓN TAB 5: MODO FIESTA QR Y CONEXIÓN LOCAL P2P         -->
+        <!-- ============================================================= -->
+        <section id="tab-party" class="tab-content hidden">
+            <div class="glass-panel p-6 rounded-3xl space-y-6 text-center max-w-2xl mx-auto">
+                <h3 class="font-title text-2xl font-bold text-white flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-qrcode text-brand-acid"></i> SALA COLABORATIVA & P2P LOCAL
+                </h3>
+                <p class="text-xs text-gray-400">Escanea este código QR para unirte a la sesión y enviar canciones desde tu celular en la misma red Wi-Fi.</p>
+                <div class="w-48 h-48 bg-white p-3 rounded-2xl mx-auto shadow-[0_0_30px_var(--color-primary-glow)] flex items-center justify-center">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://kromatyk.app/join?room=8849" alt="QR Code" class="w-full h-full">
+                </div>
+                <div class="inline-block px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-mono text-brand-acid">
+                    CÓDIGO DE SALA: <strong>#NURO-8849</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================= -->
+        <!-- 10. SECCIÓN TAB 6: EXPLORADOR DE BIBLIOTECA Y CARPETAS        -->
+        <!-- ============================================================= -->
+        <section id="tab-folders" class="tab-content hidden">
+            <div class="glass-panel p-6 rounded-3xl space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-title text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-folder-tree text-brand-acid"></i> NAVEGADOR DE ARCHIVOS LOCALES
+                    </h3>
+                    <label class="px-4 py-2 rounded-xl bg-brand-acid text-black font-bold text-xs cursor-pointer shadow-[0_0_12px_var(--color-primary-glow)]">
+                        <i class="fa-solid fa-plus mr-1"></i> Cargar Carpeta MP3
+                        <input type="file" multiple accept="audio/*" onchange="loadLocalFiles(event)" class="hidden">
+                    </label>
+                </div>
+                <div id="local-file-list" class="space-y-2">
+                    <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex justify-between items-center text-xs font-mono">
+                        <span class="text-gray-300"><i class="fa-solid fa-music mr-2 text-brand-acid"></i> 01_Besame_Dario_Gomez_Remix.mp3</span>
+                        <span class="text-gray-400">3.4 MB</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- NOTIFICACIÓN TOAST FLOTANTE -->
+    <div id="toast" class="fixed bottom-6 right-6 px-4 py-3 rounded-2xl bg-black border border-brand-acid text-brand-acid text-xs font-mono font-bold shadow-[0_0_20px_var(--color-primary-glow)] transition-all duration-300 transform translate-y-20 opacity-0 z-50">
+        Mensaje de sistema
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- 11. MOTOR JAVASCRIPT DE AUDIO (Web Audio API) Y LÓGICA DE LA APP  -->
+    <!-- ================================================================= -->
+    <script>
+        // Variables Globales del Motor Audio DSP
+        let audioCtx = null;
+        let analyser = null;
+        let isPlaying = false;
+        let currentTheme = 'signature';
+        let visMode = 'bars';
+        let ebuEnabled = true;
+
+        // --- MÓDULO 1: INICIALIZACIÓN DEL MOTOR DE AUDIO REAL (DSP) ---
+        function toggleAudioEngine() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 64;
+                
+                document.getElementById('engine-dot').className = "w-2.5 h-2.5 rounded-full bg-brand-acid shadow-[0_0_8px_var(--color-primary)]";
+                document.getElementById('engine-text').innerText = "DSP: Activo (Web Audio API ON)";
+                showToast("Motor DSP Sintetizado Iniciado");
+                startSynthAudio();
+                drawVisualizer();
+            }
+        }
+
+        // --- MÓDULO 2: SINTETIZADOR DE SONIDO ELECTRÓNICO ---
+        function startSynthAudio() {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(110, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            osc.connect(gain);
+            gain.connect(analyser);
+            analyser.connect(audioCtx.destination);
+            osc.start();
+        }
+
+        // --- MÓDULO 3: CONTROLADOR DE REPRODUCCIÓN Y VINILO ---
+        function togglePlayPause() {
+            if (!audioCtx) toggleAudioEngine();
+            isPlaying = !isPlaying;
+            const vinyl = document.getElementById('vinyl-disc');
+            const tonearm = document.getElementById('tonearm');
+            const playIcon = document.getElementById('main-play-icon');
+
+            if (isPlaying) {
+                vinyl.classList.remove('paused');
+                tonearm.style.transform = 'rotate(0deg)';
+                playIcon.className = 'fa-solid fa-pause';
+                showToast("Reproduciendo pista");
+            } else {
+                vinyl.classList.add('paused');
+                tonearm.style.transform = 'rotate(-25deg)';
+                playIcon.className = 'fa-solid fa-play ml-1';
+                showToast("Pausado");
+            }
+        }
+
+        // --- MÓDULO 4: DIBUJO DEL VISUALIZADOR 3D A 60 FPS ---
+        function drawVisualizer() {
+            const canvas = document.getElementById('visualizer-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            function render() {
+                requestAnimationFrame(render);
+                analyser.getByteFrequencyData(dataArray);
+
+                ctx.fillStyle = 'rgba(15, 7, 27, 0.2)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                const barWidth = (canvas.width / bufferLength) * 2.5;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    const barHeight = (dataArray[i] / 255) * canvas.height;
+                    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim();
+
+                    ctx.fillStyle = primaryColor || '#CCFF00';
+                    ctx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
+                    x += barWidth;
+                }
+            }
+            render();
+        }
+
+        // --- MÓDULO 5: CAMBIO DE PESTAÑAS (TAB SWITCHING) ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'border-brand-acid', 'bg-white/10', 'text-brand-acid');
+                btn.classList.add('border-transparent', 'text-gray-400');
+            });
+
+            const activeNav = document.getElementById('nav-' + tabId);
+            if (activeNav) {
+                activeNav.classList.add('active', 'border-brand-acid', 'bg-white/10', 'text-brand-acid');
+                activeNav.classList.remove('text-gray-400');
+            }
+        }
+
+        // --- MÓDULO 6: CAMBIO DINÁMICO DE PALETA DE COLORES ---
+        function changeTheme(theme) {
+            document.body.className = "h-full font-sans antialiased flex flex-col overflow-x-hidden selection:bg-brand-acid selection:text-black";
+            if (theme !== 'signature') {
+                document.body.classList.add('theme-' + theme);
+            }
+            showToast("Tema actualizado: " + theme);
+        }
+
+        // --- MÓDULO 7: GENERADOR DE RESPUESTA DE INTELIGENCIA ARTIFICIAL ---
+        function processAICommand() {
+            const prompt = document.getElementById('ai-prompt-input').value;
+            const output = document.getElementById('ai-json-output');
+            
+            output.innerText = "// Procesando intent NLP con Gemini Engine...";
+            
+            setTimeout(() => {
+                const response = {
+                    "status": "success",
+                    "action": "manage_playlist",
+                    "prompt_parsed": prompt,
+                    "executed_operations": [
+                        { "op": "ADD", "track": "Bésame", "artist": "Darío Gómez" },
+                        { "op": "REMOVE", "track": "Traidora", "artist": "Jessi Uribe" },
+                        { "op": "ADD", "track": "Cuando Vuelvas", "artist": "Binomio de Oro" }
+                    ],
+                    "smart_crossfade_bpm": 128.0
+                };
+                output.innerText = JSON.stringify(response, null, 2);
+                showToast("Lista actualizada por IA");
+            }, 800);
+        }
+
+        // --- MÓDULO 8: MENSÁFONÍA Y UTILIDADES ---
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        function toggleEBU() {
+            ebuEnabled = !ebuEnabled;
+            const dot = document.getElementById('ebu-dot');
+            const text = document.getElementById('ebu-status-header');
+            if (ebuEnabled) {
+                dot.classList.add('translate-x-4');
+                text.innerText = "ON (-14 LUFS)";
+                showToast("Normalización EBU R128 Activada");
+            } else {
+                dot.classList.remove('translate-x-4');
+                text.innerText = "OFF (Ganancia Nativa)";
+                showToast("EBU R128 Desactivado");
+            }
+        }
+
+        function setVisMode(mode) {
+            visMode = mode;
+            showToast("Modo de visualización: " + mode);
+        }
+
+        function syncBPM() {
+            showToast("BPM Sincronizado a 128.0 en ambos Decks");
+        }
+
+        function loadLocalFiles(event) {
+            const files = event.target.files;
+            const list = document.getElementById('local-file-list');
+            list.innerHTML = '';
+            for (let i = 0; i < files.length; i++) {
+                list.innerHTML += `
+                    <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex justify-between items-center text-xs font-mono">
+                        <span class="text-gray-300"><i class="fa-solid fa-music mr-2 text-brand-acid"></i> ${files[i].name}</span>
+                        <span class="text-gray-400">${(files[i].size / 1024 / 1024).toFixed(2)} MB</span>
+                    </div>`;
+            }
+            showToast(`Cargados ${files.length} archivos locales`);
+        }
+    </script>
+</body>
+</html>

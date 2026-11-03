@@ -1,0 +1,24 @@
+{
+  "name": "Nuro Lab",
+  "short_name": "NuroLab",
+  "description": "Reproductor de Música Inteligente con Modo DJ y Visualizador 3D",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0F071B",
+  "theme_color": "#00F0FF",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3659/3659784.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3659/3659784.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
